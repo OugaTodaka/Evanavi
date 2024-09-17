@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+<body>
+    <h2>Home</h2>
+    <ul>
+        {% for eva in eva_list %}
+        <a>{{eva.id}}:{{eva.detail}}</a>
+        <a>{{eva.from_user}}</a>
+        {% endfor %}
+    </ul>
+</body>
+</html>
