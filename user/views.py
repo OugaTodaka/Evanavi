@@ -1,7 +1,7 @@
 from django.views.generic import CreateView, TemplateView
 from .forms import UserCreationForm
 from django.urls import reverse_lazy
-from django.contrib.auth.views import LoginView as BaseLoginView
+from django.contrib.auth.views import LoginView as BaseLoginView, LogoutView as BaseLogoutView
 from .forms import LoginForm
 # Create your views here.
 class SignUpView(CreateView):
@@ -23,3 +23,6 @@ class SignUpSuccessView(TemplateView):
 class LoginView(BaseLoginView):
     form_class = LoginForm
     template_name = "user/signin.html"
+
+class LogoutView(BaseLogoutView):
+    success_url = reverse_lazy("main:home")
