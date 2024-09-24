@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <title>Home</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <h2>Home</h2>
+    <img src="{% static "media/logo/Eva.png" %}" width=300 height=300 alt="エヴァナビロゴ" class="logo">
+   
     <ul>
         {% for eva in eva_list %}
         <a>{{eva.id}}:{{eva.detail}}</a>
@@ -18,8 +22,13 @@
     <a href="{% url 'main:status' %}" class="btn btn-primary">ステータス確認</a>
     <a href="{% url 'user:signout' %}" class="btn btn-primary">ログアウト</a>
     {% else %}
-    <a href="{% url 'user:signup' %}">新規登録</a>
-    <a href="{% url 'user:signin' %}">ログイン</a>
+    <p class="overview">概要説明</p>
+    <div class="button">
+        <a href="{% url 'user:signup' %}">新規登録</a>
+    </div>
+    <div class="button">
+        <a href="{% url 'user:signin' %}">ログイン</a>
+    </div>
     {% endif %}
 </body>
 </html>

@@ -1,0 +1,50 @@
+.button a {
+    background: #eee;
+    border-radius: 9999px;
+    position: relative;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: auto;
+    max-width: 250px;
+    padding: 10px 25px;
+    font-family: "Noto Sans Japanese";
+    text-decoration: none;
+    color: #333;
+    line-height: 1.8;
+    transition: 0.3s ease-in-out;
+    font-weight: 500;
+}
+.button a:hover {
+  background: #333;
+  color: #FFF;
+}
+.button a::after{
+    content: '';
+    position: absolute;
+    top: 42%;
+    right: 2rem;
+    width: 6px;
+    height: 6px;
+    border-top: 2px solid #333;
+    border-right: 2px solid #333;
+    transform: rotate(45deg);
+    transition: all .3s;
+}
+
+.button a:hover::after{
+    border-top: 2px solid #fff;
+    border-right: 2px solid #fff;
+    animation: arrowrotate .3s;
+}
+
+@keyframes arrowrotate {
+100% {
+    transform: rotate(360deg);
+  }
+}
+body{
+    vertical-align:middle; 
+    padding: 50px 0;
+    text-align: center;
+}
