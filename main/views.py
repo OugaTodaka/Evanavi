@@ -38,22 +38,25 @@ def user_data_view(request):
 
     return render(request, 'main/user_data_form.html', {'form': form})
 
-def eva_view(request, for_user_id):
-    # ログインしているユーザーのグループコードを取得
+def eva_view(request):
+    # ログインしているユーザーのデータを取得
     current_user_data = get_object_or_404(UserData, username=request.user)
-    current_group_code = current_user_data.group_code
+    current_group_code = current_user_data.group_code  # ログインユーザーのグループコードを取得
 
     if request.method == 'POST':
-        form = EvaForm(request.POST, from_user=request.user)
+        form = EvaForm(request.POST, from_user=request.user, group_code=current_group_code)  # from_user と group_code を渡す
         if form.is_valid():
             eva = form.save(commit=False)
-            eva.for_user_id = for_user_id  # 評価されるユーザーをセット
+            eva.from_user = request.user  # ログインユーザーが評価を行う
             eva.save()
             return redirect('main:home')  # 適切なリダイレクト先に変更
     else:
-        form = EvaForm(from_user=request.user)
+        form = EvaForm(from_user=request.user, group_code=current_group_code)  # from_user と group_code を渡す
 
-    return render(request, 'main/eva_form.html', {'form': form})
+    return render(request, 'main/eva_form.html', {
+        'form': form,
+    })
+
 
 @login_required  # ログインが必要なビューにするためのデコレーター
 def status_view(request):
