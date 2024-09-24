@@ -1,0 +1,29 @@
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">送信</button>
+</form>
+
+<script>
+    document.getElementById("zip_code").addEventListener("input", function () {
+        var zip_code = this.value.replace('-', '');  // ハイフンを削除
+        if (zip_code.length === 7) {
+            fetch(`https://zipcloud.ibsnet.co.jp/api/search?zipcode=${zip_code}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.results) {
+                        var address1 = data.results[0].address1;  // 都道府県
+                        var address2 = data.results[0].address2 + data.results[0].address3;  // 市区町村
+                        document.getElementById("address1").value = address1;
+                        document.getElementById("address2").value = address2;
+                    } else {
+                        alert("住所が見つかりません。郵便番号を確認してください。");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("APIの呼び出しに失敗しました。");
+                });
+        }
+    });
+</script>
