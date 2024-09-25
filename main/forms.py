@@ -1,4 +1,6 @@
 from django import forms
+
+from user.models import User
 from .models import UserData, Eva
 
 # UserDataのフォーム
@@ -56,12 +58,13 @@ class EvaForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         from_user = kwargs.pop('from_user', None)  # 評価を行うユーザーを受け取る
+        group_code = kwargs.pop('group_code', None)  # グループコードを受け取る
         super(EvaForm, self).__init__(*args, **kwargs)
 
-        if from_user:
-            # ログインしているユーザーのグループコードを取得
-            current_user_data = UserData.objects.get(username=from_user)
-            current_group_code = current_user_data.group_code
-
-            # for_user フィールドのクエリセットを同じグループのユーザーに限定
-            self.fields['for_user'].queryset = UserData.objects.filter(group_code=current_group_code)
+        if from_user and group_code:
+            # 同じグループコードのユーザーのみ表示
+            self.fields['for_user'].queryset = User.objects.filter(
+                userdata__group_code=group_code
+            )
+        else:
+            self.fields['for_user'].queryset = User.objects.none()  # 何も選択できない状態
