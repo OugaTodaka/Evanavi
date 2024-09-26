@@ -9,10 +9,6 @@ from io import BytesIO
 from .models import Status
 from django.contrib.auth.decorators import login_required
 
-sociability_list = ['リーダーシップ', 'チームワーク', ]  # 社交性を上げる単語
-knowledge_list = ['技術スキル', '問題解決', ]  # 知識を上げる単語
-qualification_list = ['資格取得', '認定', ]  # 資格を上げる単語
-
 class HomeView(ListView):
     model = Eva
     template_name = "main/home.html"
@@ -57,14 +53,27 @@ def eva_view(request):
             # 評価対象ユーザーのステータスを取得
             target_status = get_object_or_404(Status, user=eva.for_user)
 
+            # ステータスを上げる単語のリスト
+            sociability_list = ['社交性', 'リーダーシップ','チームワーク', 'コミュニケーション', '協力', '積極性', '調整力', '対人スキル', '交渉力', '人脈作り', 'プレゼンテーション', '適応力', '共感力', '異文化理解']  # 社交性を上げる単語
+            knowledge_list = ['知識', '技術スキル', '問題解決', '分析力', 'クリティカルシンキング', '学習意欲', '情報収集', '戦略的思考', '専門知識', 'データ分析', '調査能力', '創造性', '批判的思考', '語学力', '研究']  # 知識を上げる単語
+            qualification_list = ['資格取得', '認定', '資格', '取得', '認定証', '業界標準資格', 'トレーニング', '技術認定', 'プロフェッショナル資格', '免許', '専門資格', '実務経験', '技術資格', 'デジタルリテラシー']  # 資格を上げる単語
+            
             # 評価内容に基づいてステータスを更新
             detail = eva.detail.lower()  # 小文字にして評価内容をチェックしやすくする
-            if detail in sociability_list and target_status.sociability < 5:
-                target_status.sociability += 1  # 社交性を上げる
-            if detail in knowledge_list and target_status.knowledge < 5:
-                target_status.knowledge += 1  # 知識を上げる
-            if detail in qualification_list and target_status.qualification < 5:
-                target_status.qualification += 1  # 資格を上げる
+            if any(word in detail for word in sociability_list):
+                target_status.sociability_point += 1  # 社交性ポイントを上げる
+                if target_status.sociability_point > 0 and target_status.sociability_point % 10 == 0 and target_status.sociability < 5:
+                    target_status.sociability += 1  # 社交性を上げる
+
+            if any(word in detail for word in knowledge_list):
+                target_status.knowledge_point += 1  # 知識ポイントを上げる
+                if target_status.knowledge_point > 0 and target_status.knowledge_point % 10 == 0 and target_status.knowledge < 5:
+                    target_status.knowledge += 1  # 知識を上げる
+
+            if any(word in detail for word in qualification_list):
+                target_status.qualification_point += 1  # 資格ポイントを上げる
+                if target_status.qualification_point > 0 and target_status.qualification_point % 10 == 0 and target_status.qualification < 5:
+                    target_status.qualification += 1  # 資格を上げる
 
             # ステータスを保存
             target_status.save()
@@ -94,7 +103,7 @@ def radar_chart_view(request):
     status = get_object_or_404(Status, user=request.user)
 
     # データ設定（五段階評価）
-    labels = ['社交性', '知識', '資格']
+    labels = ['sociability', 'knowledge', 'qualification']
     values = [status.sociability, status.knowledge, status.qualification]
     values += values[:1]  # 閉じた形にするために最初の値を追加
 

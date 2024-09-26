@@ -37,6 +37,9 @@ class Status(models.Model):
     sociability = models.IntegerField(default=1, choices=[(i, i) for i in range(1, 6)])  # 社交性
     knowledge = models.IntegerField(default=1, choices=[(i, i) for i in range(1, 6)])    # 知識
     qualification = models.IntegerField(default=1, choices=[(i, i) for i in range(1, 6)])  # 資格
+    sociability_point = models.IntegerField(default=0)  # 社交性を上げるためのポイント
+    knowledge_point = models.IntegerField(default=0)    # 知識を上げるためのポイント
+    qualification_point = models.IntegerField(default=0)    # 資格を上げるためのポイント
 
     class Meta:
         verbose_name_plural = 'ステータス'
