@@ -112,13 +112,15 @@ def radar_chart_view(request):
     angles += angles[:1]
 
     fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
-    ax.fill(angles, values, color='blue', alpha=0.25)
-    ax.plot(angles, values, color='blue', linewidth=2)
+    ax.fill(angles, values, color='aqua', alpha=0.25)
+    ax.plot(angles, values, color='aqua', linewidth=2)
 
+    # Y軸の範囲設定とラベルの設定（1から5まで）
     ax.set_ylim(0, 5)
+    ax.set_yticks([1, 2, 3, 4, 5])  # 目盛りを設定
+    ax.set_yticklabels([1, 2, 3, 4, 5])  # それぞれにラベルを設定
 
-
-    ax.set_yticklabels([])  # Y軸ラベル非表示
+    # X軸（ラベルの設定）
     ax.set_xticks(angles[:-1])
     ax.set_xticklabels(labels)
 
@@ -126,5 +128,5 @@ def radar_chart_view(request):
     buf = BytesIO()
     plt.savefig(buf, format='png')
     buf.seek(0)
-    
+
     return HttpResponse(buf, content_type='image/png')
