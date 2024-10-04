@@ -11,6 +11,7 @@ from .models import Status
 from django.contrib.auth.decorators import login_required
 import requests
 from django.db.models import F, Case, When, ExpressionWrapper, IntegerField
+from django.contrib import messages
 
 # メイン画面
 class HomeView(TemplateView):
@@ -119,6 +120,7 @@ def user_data_required(view_func):
         try:
             UserData.objects.get(username=request.user)
         except UserData.DoesNotExist:
+            messages.warning(request, 'ユーザ情報を登録してください。')
             return redirect('main:home')
         return view_func(request, *args, **kwargs)
     return _wrapped_view
