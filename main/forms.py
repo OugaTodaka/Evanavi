@@ -68,3 +68,38 @@ class EvaForm(forms.ModelForm):
             )
         else:
             self.fields['for_user'].queryset = User.objects.none()  # 何も選択できない状態
+            
+
+# フィルター用のフォーム
+class JobFilterForm(forms.Form):
+    localGovernmentCode = forms.IntegerField(required=False, label='地方公共団体コード(都道府県・市区町村)')
+    # workLocationPrefecture = forms.CharField(required=False, label='都道府県')
+    # workLocationCity = forms.CharField(required=False, label='市区町村')
+    # salaryMin = forms.IntegerField(required=False, label="最低給与")
+    # salaryMax = forms.IntegerField(required=False, label="最高給与")
+    
+    # EMPLOYMENT_TYPE_CHOICES = [
+    #     ('', '指定なし'),
+    #     ('100','正社員'),
+    #     ('110','新卒採用'),
+    #     ('120','パート・アルバイト'),
+    #     ('130','派遣社員'),
+    #     ('140','インターン'),
+    #     ('150','ボランティア'),
+    #     ('160','契約社員'),
+    #     ('170','業務委託'),
+    #     ('180','プロボノ'),
+    # ]
+    # employmentTypeCode = forms.ChoiceField(
+    #     choices=EMPLOYMENT_TYPE_CHOICES, required=False, label="雇用形態"
+    # )
+
+    # # 職種フィールド
+    # occupationName = forms.CharField(required=False, label="職種")
+
+    # # 加入保険フィールド
+    # insuranceNote = forms.CharField(required=False, label="加入保険")
+    
+    # 表示件数フィールド
+    results = forms.IntegerField(required=False, label="表示件数(1~1000件)")
+

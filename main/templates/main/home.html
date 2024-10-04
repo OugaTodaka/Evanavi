@@ -9,15 +9,11 @@
 </head>
 <body>
     <img src="{% static "media/logo/Eva.png" %}" width=300 height=300 alt="エヴァナビロゴ" class="logo">
-   
-    <ul>
-        {% for eva in eva_list %}
-        <a>{{eva.id}}:{{eva.detail}}</a>
-        <a>{{eva.from_user}}</a>
-        {% endfor %}
-    </ul>
+
     {% if user.is_authenticated %}
+    <a href="{% url 'main:job_list' %}" class="btn btn-primary">求人リストへ</a>
     <a href="{% url 'main:eva' %}" class="btn btn-primary">評価登録</a>
+    <a href="{% url 'main:eva_list' user_id=user.id %}" class="btn btn-primary">評価一覧</a>
     <a href="{% url 'main:user_register' %}" class="btn btn-primary">ユーザ情報</a>
     <a href="{% url 'main:status' %}" class="btn btn-primary">ステータス確認</a>
     <a href="{% url 'user:signout' %}" class="btn btn-primary">ログアウト</a>

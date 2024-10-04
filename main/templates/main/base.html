@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}評価システム{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+    <header class="bg-blue-600 text-white shadow-md">
+        <nav class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <a href="{% url 'main:home' %}" class="text-2xl font-bold">評価システム</a>
+                <ul class="flex space-x-4">
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'main:status' %}" class="hover:text-blue-200">プロフィール</a></li>
+                        <li><a href="{% url 'main:eva' %}" class="hover:text-blue-200">評価</a></li>
+                        <li><a href="{% url 'user:signout' %}" class="hover:text-blue-200">ログアウト</a></li>
+                    {% else %}
+                        <li><a href="{% url 'user:signin' %}" class="hover:text-blue-200">ログイン</a></li>
+                        <li><a href="{% url 'user:register' %}" class="hover:text-blue-200">登録</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-8">
+        {% if messages %}
+            <div class="messages mb-8">
+                {% for message in messages %}
+                    <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-4" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="bg-gray-800 text-white py-4">
+        <div class="container mx-auto px-4 text-center">
+            <p>&copy; 2024 評価システム</p>
+        </div>
+    </footer>
+
+    {% block extra_body %}{% endblock %}
+</body>
+</html>

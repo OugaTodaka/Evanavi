@@ -1,0 +1,29 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6"></h1>
+
+    {% if evaluations %}
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {% for evaluation in evaluations %}
+                <div class="bg-white shadow-md rounded-lg p-6">
+                    <p class="text-lg font-semibold mb-2">評価してくれたユーザー: {{ evaluation.from_user.email }}</p>
+                    <p class="text-gray-600 mb-2">評価日時: {{ evaluation.pub_date|date:"Y/m/d H:i" }}</p>
+                    <p class="text-lg font-semibold mb-2">評価内容:</p>
+                    <p class="text-gray-800">{{ evaluation.detail }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-xl text-gray-600">まだ評価はありません。</p>
+    {% endif %}
+
+    <div class="mt-8">
+        <a href="{% url 'main:eva' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            評価ページに戻る
+        </a>
+    </div>
+</div>
+{% endblock %}
