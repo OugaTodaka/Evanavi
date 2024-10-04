@@ -2,7 +2,7 @@ from functools import wraps
 from django.views.generic import *
 from .models import *
 from django.shortcuts import get_object_or_404, render, redirect
-from .forms import JobFilterForm, UserDataForm, EvaForm
+from .forms import EvaluationSearchForm, JobFilterForm, UserDataForm, EvaForm
 import matplotlib.pyplot as plt
 import numpy as np
 from django.http import HttpResponse, HttpResponseForbidden
@@ -200,13 +200,18 @@ def eva_view(request):
 # 評価を取得して表示する
 @login_required
 @user_data_required
-def view_evaluation(request, user_id):
-    target_user = get_object_or_404(User, id=user_id)
-
-    # 相手からの評価を取得（自分が評価されたもの）
+def view_evaluation(request):
+    # 自分が評価されたものを取得
     evaluations = Eva.objects.filter(for_user=request.user)
-
+    
+    form = EvaluationSearchForm(request.GET or None)
+    
+    if form.is_valid():
+        email = form.cleaned_data.get('email')
+        if email:
+            evaluations = evaluations.filter(from_user__email__icontains=email)
+    
     return render(request, 'main/view_evaluation.html', {
         'evaluations': evaluations,
-        'target_user': target_user,
+        'form': form,
     })
