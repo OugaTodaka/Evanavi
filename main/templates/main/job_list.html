@@ -1,0 +1,136 @@
+{% comment %} <!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>求人情報一覧</title>
+</head>
+<body>
+    <form method="GET" action=".">
+        <div>
+            <label for="workLocationPrefecture">勤務地（都道府県）:</label>
+            {{ form.workLocationPrefecture }}
+        </div>
+        <div>
+            <label for="workLocationCity">勤務地（市区町村）:</label>
+            {{ form.workLocationCity }}
+        </div>
+        <div>
+            <label for="salaryMin">最低給与:</label>
+            {{ form.salaryMin }}
+        </div>
+        <div>
+            <label for="salaryMax">最高給与:</label>
+            {{ form.salaryMax }}
+        </div>
+        <div>
+            <label for="employmentType">雇用形態:</label>
+            {{ form.employmentType }}
+        </div>
+        <div>
+            <label for="occupationName">職種:</label>
+            {{ form.occupationName }}
+        </div>
+        <div>
+            <label for="insuranceNote">加入保険:</label>
+            {{ form.insuranceNote }}
+        </div>
+        <button type="submit">フィルターを適用</button>
+    </form>
+    <h1>求人情報一覧</h1>
+
+    {% if jobs %}
+    <h2>求人件数: {{ total }}</h2>
+        <ul>
+            {% for job in jobs %}
+            <img src="{{ job.imgUrlPc }}" alt="{{ job.companyName }}">
+                <li>
+                    <h2>{{ job.title }}</h2>
+                    <p>職種: {{ job.occupationName }}</p>
+                    <p>勤務地: {{ job.workLocationPrefecture }} {{ job.workLocationCity }}</p>
+                    <p>給与: ¥{{ job.salaryMin }} - ¥{{ job.salaryMax }}</p>
+                    <p>休日: {{ job.holidayNote }}</p>
+                    <p>1ヶ月の残業時間: {{ job.overTimeAverage }}</p>
+                    <p>雇用形態: {{ job.employmentTypeNote }}</p>
+                    <p>加入保険: {{ job.insuranceNote }}</p>
+                    <p>福利厚生: {{ job.welfare }}</p>
+                    <p>仕事内容: {{ job.description }}</p>
+                    <a href="{{ job.receptionUrl }}">応募する</a>
+                </li>
+                <hr>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>求人情報が見つかりませんでした。</p>
+    {% endif %}
+
+</body>
+</html> {% endcomment %}
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yahoo!求人検索</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <a href="https://fragment-database.com/municipal_code_1.html" target="_blank">・東日本の地方公共団体コードはこちら</a><br>
+    <a href="https://fragment-database.com/municipal_code_2.html" target="_blank">・西日本の地方公共団体コードはこちら</a>
+    <div class="container mx-auto p-4">
+        <h1 class="text-2xl font-bold mb-4">Yahoo!求人検索</h1>
+        <form method="get">
+            {% for field in form %}
+                <div class="mb-4">
+                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <p class="text-red-500 text-xs italic">{{ field.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                検索
+            </button>
+        </form>
+
+        <br>
+
+        <h1>全体求人件数: {{ total }}</h1>
+        <h1>検索求人件数: {{ count }}</h1>
+
+        {% if error %}
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <strong class="font-bold">エラー:</strong>
+                <span class="block sm:inline">{{ error }}</span>
+            </div>
+        {% elif jobs %}
+            <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {% for job in jobs %}
+                    <div class="bg-white border rounded-lg p-4 shadow-sm">
+                        <h2 class="text-xl font-semibold mb-2">{{ job.title }}</h2>
+                        <p class="text-gray-600 mb-2">{{ job.cpName }}</p>
+                        <p class="text-gray-500 mb-2">{{ job.workLocationPrefecture }} {{ job.workLocationCity }}</p>
+                        <p class="text-gray-500 mb-2">職種: {{ job.occupationName }}</p>
+                        <p class="text-gray-500 mb-2">給与: ¥{{ job.salaryMin }} - ¥{{ job.salaryMax }}</p>
+                        <p class="text-gray-500 mb-2">休日: {{ job.holidayNote }}</p>
+                        <p class="text-gray-500 mb-2">1ヶ月の残業時間: {{ job.overTimeAverage }}</p>
+                        <p class="text-gray-500 mb-2">雇用形態: {{ job.employmentTypeNote }}</p>
+                        <p class="text-gray-500 mb-2">加入保険: {{ job.insuranceNote }}</p>
+                        <p class="text-gray-500 mb-2">福利厚生: {{ job.welfare }}</p>
+                        <p class="text-sm mb-4 line-clamp-3">{{ job.description }}</p>
+                        {% if job.receptionUrl %}
+                            <a href="{{ job.receptionUrl }}" target="_blank" rel="noopener noreferrer" class="inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
+                                詳細を見る
+                            </a>
+                        {% endif %}
+                    </div>
+                {% empty %}
+                    <p class="col-span-3 text-center text-gray-500">求人が見つかりませんでした。</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
