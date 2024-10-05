@@ -1,3 +1,5 @@
+{% extends 'main/base.html' %}
+{% block content %}
 <h2>{{ status.user.username }} のステータス</h2>
 <ul>
     <li>社交性(sociability): {{ status.sociability }}</li>
@@ -7,3 +9,4 @@
 
 <!-- レーダーチャートの表示 -->
 <img src="{% url 'main:radar_chart' %}" alt="ステータスのレーダーチャート">
+{% endblock %}

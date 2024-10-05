@@ -14,12 +14,12 @@
                 <a href="{% url 'main:home' %}" class="text-2xl font-bold">評価システム</a>
                 <ul class="flex space-x-4">
                     {% if user.is_authenticated %}
-                        <li><a href="{% url 'main:status' %}" class="hover:text-blue-200">プロフィール</a></li>
-                        <li><a href="{% url 'main:eva' %}" class="hover:text-blue-200">評価</a></li>
+                        <li><a href="{% url 'main:status' %}" class="hover:text-blue-200">ステータス</a></li>
+                        <li><a href="{% url 'main:eva' %}" class="hover:text-blue-200">評価する</a></li>
                         <li><a href="{% url 'user:signout' %}" class="hover:text-blue-200">ログアウト</a></li>
                     {% else %}
                         <li><a href="{% url 'user:signin' %}" class="hover:text-blue-200">ログイン</a></li>
-                        <li><a href="{% url 'user:register' %}" class="hover:text-blue-200">登録</a></li>
+                        <li><a href="{% url 'user:signup' %}" class="hover:text-blue-200">登録</a></li>
                     {% endif %}
                 </ul>
             </div>

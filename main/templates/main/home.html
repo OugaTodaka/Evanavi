@@ -1,3 +1,5 @@
+{% extends 'main/base.html' %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -8,19 +10,6 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
 </head>
 <body>
-
-{% if messages %}
-<div class="messages">
-    {% for message in messages %}
-    <div class="alert alert-{{ message.tags }}" role="alert">
-        {{ message }}
-    </div>
-    {% endfor %}
-</div>
-{% endif %}
-
-    <img src="{% static "media/logo/Eva.png" %}" width=300 height=300 alt="エヴァナビロゴ" class="logo">
-
     {% if user.is_authenticated %}
     <a href="{% url 'main:job_list' %}" class="btn btn-primary">求人リストへ</a>
     <a href="{% url 'main:eva' %}" class="btn btn-primary">評価登録</a>
@@ -39,3 +28,4 @@
     {% endif %}
 </body>
 </html>
+{% endblock %}
