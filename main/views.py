@@ -1,4 +1,5 @@
 from functools import wraps
+import json
 from django.views.generic import *
 from .models import *
 from django.shortcuts import get_object_or_404, render, redirect
@@ -12,6 +13,7 @@ from django.contrib.auth.decorators import login_required
 import requests
 from django.db.models import F, Case, When, ExpressionWrapper, IntegerField
 from django.contrib import messages
+import openai
 
 # メイン画面
 class HomeView(TemplateView):
@@ -215,3 +217,43 @@ def view_evaluation(request):
         'evaluations': evaluations,
         'form': form,
     })
+    
+    
+    
+# JSONファイルからAPIキーを読み込む関数
+def load_api_key_from_json(file_path):
+    with open(file_path, 'r') as file:
+        config = json.load(file)
+        return config.get("openai_api_key")
+
+# JSONファイルのパス
+json_file_path = 'C:/Users/s_ozasa/エヴァナビ/Evanavi/.gitignore/openAI_api.json'
+
+# APIキーをロード
+api_key = load_api_key_from_json(json_file_path)
+
+# OpenAI APIキーを設定
+openai.api_key = api_key
+
+@login_required
+@user_data_required
+def generate_self_promotion(request):
+    current_user = request.user
+    evaluations = Eva.objects.filter(for_user=current_user)
+
+    # 評価内容を結合してプロンプトを作成
+    evaluation_details = "\n".join([eva.detail for eva in evaluations])
+
+    prompt = f"以下の評価をもとに自己PRを作成してください:\n{evaluation_details}\n自己PR:"
+
+    # OpenAI APIへのリクエスト
+    response = openai.ChatCompletion.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}]
+    )
+
+    # 生成された自己PRを取得
+    self_promotion = response['choices'][0]['message']['content']
+
+    return render(request, 'main/self_promotion.html', {'self_promotion': self_promotion})
+
