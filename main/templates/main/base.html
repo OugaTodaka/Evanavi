@@ -13,7 +13,7 @@
     <header class="bg-blue-600 text-white shadow-md">
         <nav class="container mx-auto px-4 py-4">
             <div class="flex justify-between items-center">
-                <img src="{% static "media/logo/Eva.png" %}" width=200 height=75 alt="エヴァナビロゴ" class="logo">
+                <a href="{% url 'main:home' %}"> <img src="{% static "media/logo/Eva.png" %}" width=200 height=75 alt="エヴァナビロゴ" class="logo"></a>
                 <a href="{% url 'main:home' %}" class="text-2xl font-bold">評価システム</a>
                 <ul class="flex space-x-4">
                     {% if user.is_authenticated %}
