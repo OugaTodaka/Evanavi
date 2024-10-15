@@ -1,4 +1,6 @@
 {% load static %}
+{% load widget_tweaks %}
+
   <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
   <div class="form-container">
     <div class="container">
@@ -7,11 +9,12 @@
 
         <div class="col-md-8 col-lg-6">
           
-          <img src="{% static "media/logo/Eva.png" %}" width=300 height=300 alt="エヴァナビロゴ" class="logo">
+          <img src="{% static "media/logo/Eva.png" %}" width=300 height=100 alt="エヴァナビロゴ" class="logo">
           <h3>▼--<span id="signup">サインアップ</span>--▼</h3>
-          <br>
-            
-              <form method="post" >
+          
+            <br>
+              <form method="post" class="box">
+                
                 {% csrf_token %}
 
                 {% for field in form %}
@@ -32,9 +35,11 @@
                 </p>
 
                 <input type="submit" value="Sign up">
+                
               </form>
+            <br>
+          
             
-          <br>
           <p>
             <a href="{% url 'main:home' %}">
               <span class="material-symbols-outlined">

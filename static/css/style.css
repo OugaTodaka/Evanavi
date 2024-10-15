@@ -1,3 +1,4 @@
+
 .button a {
     background: #eee;
     border-radius: 9999px;
@@ -51,12 +52,14 @@ body{
 /* 以下ログイン、新規登録用 */
 /* フォーム全体を囲むコンテナのスタイル */
 .form-container {
-    background-color: #fb1111;
+    background-color: #f8f5f5;
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
-    border: 1px solid #8b0d0d;
+    border: 1px solid #060404;
     width: 100%;
     max-width: 500px;
     margin: 20px auto;
 }
+ 
+ 
