@@ -11,5 +11,6 @@ urlpatterns = [
     path("status/", views.status_view, name="status"),
     path("status/radar_chart/", views.radar_chart_view, name="radar_chart"),
     path("jobs/", views.job_list_view, name="job_list"),
-    path("eva/<int:user_id>/", views.view_evaluation, name="eva_list"),
+    path("eva_list/", views.view_evaluation, name="eva_list"),
+    path("generate/", views.generate_self_promotion, name="generate_self_promotion"),
 ]

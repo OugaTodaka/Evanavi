@@ -102,4 +102,8 @@ class JobFilterForm(forms.Form):
     
     # 表示件数フィールド
     results = forms.IntegerField(required=False, label="表示件数(1~1000件)")
+    
+# メールアドレスで評価を検索するためのフォーム
+class EvaluationSearchForm(forms.Form):
+    email = forms.EmailField(required=False, label='メールアドレスで検索')
 
