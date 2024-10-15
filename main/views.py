@@ -227,7 +227,7 @@ def load_api_key_from_json(file_path):
         return config.get("openai_api_key")
 
 # JSONファイルのパス
-json_file_path = 'C:/Users/s_ozasa/エヴァナビ/Evanavi/.gitignore/openAI_api.json'
+json_file_path = 'C:/Users/s_ozasa/Desktop/openAI_api.json'
 
 # APIキーをロード
 api_key = load_api_key_from_json(json_file_path)
