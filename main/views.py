@@ -227,7 +227,7 @@ def load_api_key_from_json(file_path):
         return config.get("openai_api_key")
 
 # JSONファイルのパス
-json_file_path = 'C:/Users/t_toyota/Desktop/openAI_api.json'
+json_file_path = 'C:/Users/<あなたのPCユーザー名>/Desktop/openAI_api.json'
 
 # APIキーをロード
 api_key = load_api_key_from_json(json_file_path)
@@ -255,5 +255,31 @@ def generate_self_promotion(request):
     # 生成された自己PRを取得
     self_promotion = response['choices'][0]['message']['content']
 
+    # 生成された自己PRをセッションに保存しておく（ダウンロード時に利用）
+    request.session['self_promotion'] = self_promotion
+
     return render(request, 'main/self_promotion.html', {'self_promotion': self_promotion})
 
+@login_required
+@user_data_required
+def download_self_promotion(request, format):
+    # セッションから自己PRを取得
+    self_promotion = request.session.get('self_promotion')
+
+    if not self_promotion:
+        return HttpResponse("自己PRが見つかりません。もう一度生成してください。", status=400)
+
+    # ダウンロードフォーマットに応じてレスポンスを作成
+    if format == 'txt':
+        # テキスト形式でダウンロード
+        response = HttpResponse(self_promotion, content_type='text/plain')
+        response['Content-Disposition'] = 'attachment; filename="self_promotion.txt"'
+    elif format == 'json':
+        # JSON形式でダウンロード
+        self_promotion_data = {"self_promotion": self_promotion}
+        response = HttpResponse(json.dumps(self_promotion_data, ensure_ascii=False), content_type='application/json')
+        response['Content-Disposition'] = 'attachment; filename="self_promotion.json"'
+    else:
+        return HttpResponse(status=400)  # 対応していないフォーマットの場合
+
+    return response
