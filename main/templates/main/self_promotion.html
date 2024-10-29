@@ -18,6 +18,12 @@
             <a href="{% url 'main:home' %}" class="btn">ホームに戻る</a>
             <a href="{% url 'main:generate_self_promotion' %}" class="btn">もう一度生成する</a>
         </div>
+
+        <div class="download-links">
+            <h3>保存する:</h3>
+            <a href="{% url 'main:download_self_promotion' 'txt' %}" class="btn">TXT形式で保存</a>
+            <a href="{% url 'main:download_self_promotion' 'json' %}" class="btn">JSON形式で保存</a>
+        </div>
     </div>
 </body>
 </html>
