@@ -22,7 +22,7 @@
                   {{ field.label_tag }}<br>
                   {{ field }}<br>
                   {% if field.help_text %}
-                  <small style="color: grey">{{ field.help_text }}</small>
+                  <small style="color: grey" >{{ field.help_text }}</small>
                   {% endif %}
                   {% for error in field.errors %}
                   <p style="color: red">{{ error }}</p>
@@ -34,7 +34,7 @@
                   ※<span id="required_email">メールアドレスはパスワードをリセットする際に必要になりますので、登録をお願いします。</span>
                 </p>
 
-                <input type="submit" value="Sign up">
+                <input type="submit" value="Sign up" class="signup-button">
                 
               </form>
             <br>

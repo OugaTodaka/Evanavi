@@ -1,6 +1,16 @@
+.border-radius {
+    width: 150px;
+    height: 50px;
+    line-height: 50px;
+    background-color: rgb(50, 50, 50);
+    border-radius: 100vh;
+    color: #ffffff;
+    text-align: center;
+    margin: 0 auto; /*中央寄せ*/
+  }
 
 .button a {
-    background: #000000;
+    background: #b6b6b6;
     border-radius: 9999px;
     position: relative;
     display: flex;
@@ -60,6 +70,19 @@ body{
     width: 100%;
     max-width: 500px;
     margin: 20px auto;
+    
+}
+
+.signup-button{
+  height:50px;
+  width:150px;
+  font-size: 100%;
+
 }
  
- 
+ul{
+  padding-left:0;
+}
+li{
+  list-style:none;
+}
