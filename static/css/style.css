@@ -43,6 +43,7 @@
     transition: all .3s;
 }
 
+
 .button a:hover::after{
     border-top: 2px solid #fff;
     border-right: 2px solid #fff;
@@ -85,4 +86,13 @@ ul{
 }
 li{
   list-style:none;
+}
+
+.menu {
+  border-right:5px #77a6e7 solid;
+  border-top:1px #000000 solid;
+  border-left:5px #77a6e7 solid;
+  border-bottom:1px #000000 solid;
+  background-color: #e0dede;
+  padding: 10px;
 }
