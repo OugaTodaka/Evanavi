@@ -21,18 +21,18 @@ class HomeView(TemplateView):
     template_name = "main/home.html"
 
 
-# ログイン中のユーザーのステータスを表示する
-@login_required  # ログインが必要なビューにするためのデコレーター
-def status_view(request):
-    # ログイン中のユーザーのステータスを取得
-    status, created = Status.objects.get_or_create(user=request.user, defaults={
-        'sociability': 1,
-        'knowledge': 1,
-        'qualification': 1,
-    })
+# # ログイン中のユーザーのステータスを表示する
+# @login_required  # ログインが必要なビューにするためのデコレーター
+# def status_view(request):
+#     # ログイン中のユーザーのステータスを取得
+#     status, created = Status.objects.get_or_create(user=request.user, defaults={
+#         'sociability': 1,
+#         'knowledge': 1,
+#         'qualification': 1,
+#     })
     
-    # テンプレートにステータス情報を渡す
-    return render(request, 'main/status.html', {'status': status})
+#     # テンプレートにステータス情報を渡す
+#     return render(request, 'main/status.html', {'status': status})
 
 # レーダーチャートでステータスを表示する
 def radar_chart_view(request):
@@ -224,9 +224,15 @@ class EvaluationListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = self.get_form()
+
+        # ステータス情報を取得してコンテキストに追加
+        status, created = Status.objects.get_or_create(user=self.request.user, defaults={
+            'sociability': 1,
+            'knowledge': 1,
+            'qualification': 1,
+        })
+        context['status'] = status
         return context
-    
-    
     
 # JSONファイルからAPIキーを読み込む関数
 def load_api_key_from_json(file_path):
