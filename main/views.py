@@ -14,6 +14,7 @@ import requests
 from django.db.models import F, Case, When, ExpressionWrapper, IntegerField
 from django.contrib import messages
 import openai
+from django.utils.decorators import method_decorator
 
 # メイン画面
 class HomeView(TemplateView):
@@ -200,23 +201,30 @@ def eva_view(request):
     })
 
 # 評価を取得して表示する
-@login_required
-@user_data_required
-def view_evaluation(request):
-    # 自分が評価されたものを取得
-    evaluations = Eva.objects.filter(for_user=request.user)
-    
-    form = EvaluationSearchForm(request.GET or None)
-    
-    if form.is_valid():
-        email = form.cleaned_data.get('email')
-        if email:
-            evaluations = evaluations.filter(from_user__email__icontains=email)
-    
-    return render(request, 'main/view_evaluation.html', {
-        'evaluations': evaluations,
-        'form': form,
-    })
+@method_decorator([login_required, user_data_required], name='dispatch')
+class EvaluationListView(ListView):
+    model = Eva
+    template_name = 'main/view_evaluation.html'
+    context_object_name = 'evaluations'
+    paginate_by = 9
+
+    def get_queryset(self):
+        # 自分が評価されたものを取得
+        queryset = Eva.objects.filter(for_user=self.request.user)
+        form = self.get_form()
+        if form.is_valid():
+            email = form.cleaned_data.get('email')
+            if email:
+                queryset = queryset.filter(from_user__email__icontains=email)
+        return queryset
+
+    def get_form(self):
+        return EvaluationSearchForm(self.request.GET or None)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = self.get_form()
+        return context
     
     
     
@@ -227,7 +235,7 @@ def load_api_key_from_json(file_path):
         return config.get("openai_api_key")
 
 # JSONファイルのパス
-json_file_path = 'C:/Users/t_toyota/Desktop/openAI_api.json'
+json_file_path = 'C:/Users/s_ozasa/Desktop/openAI_api.json'
 
 # APIキーをロード
 api_key = load_api_key_from_json(json_file_path)
