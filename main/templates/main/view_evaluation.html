@@ -3,7 +3,26 @@
 
 {% block content %}
 <div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold mb-6">評価一覧</h1>
+    <h1 class="text-3xl font-bold mb-6">{{ status.user.username }}さんの評価</h1>
+
+    <br>
+
+    <ul>
+        <li>社交性(sociability): {{ status.sociability }}</li>
+        <li>知識(knowledge): {{ status.knowledge }}</li>
+        <li>資格力(qualification): {{ status.qualification }}</li>
+    </ul>
+
+    <br>
+    <!-- レーダーチャートの表示 -->
+    <div class="flex justify-center">
+        <img src="{% url 'main:radar_chart' %}" alt="ステータスのレーダーチャート" class="mx-auto">
+    </div>
+
+    <br>
+
+    <h1 class="text-3xl font-bold mb-6">{{ status.user.username }}さんへの評価一覧</h1>
+
     <form method="get" class="mb-8">
         {{ form.as_p }}
         <br>
@@ -11,7 +30,7 @@
             検索
         </button>
     </form>
-
+    
     {% if evaluations %}
         <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {% for evaluation in evaluations %}
@@ -26,6 +45,42 @@
     {% else %}
         <p class="text-xl text-gray-600">まだ評価はありません。</p>
     {% endif %}
+    
+    <br>
+
+    <nav aria-label="ページネーション">
+        <ul class="pagination">
+    
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="前へ">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {% endif %}
+    
+            {% for page_num in page_obj.paginator.page_range %} 
+                {% if page_num == page_obj.number %}
+                    <li class="page-item active">
+                        <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                    </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+    
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="次へ">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            {% endif %}
+    
+        </ul>
+    </nav>
 
     <div class="mt-8">
         <a href="{% url 'main:home' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
