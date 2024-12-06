@@ -3,25 +3,8 @@
 
 {% block content %}
 <div class="container mx-auto px-4 py-8">
-    <div class="form-container">
-        <h1 class="text-3xl font-bold mb-6">{{ status.user.username }}さんの評価</h1>
 
-        <br>
 
-        <ul>
-            <li>社交性(sociability): {{ status.sociability }}</li>
-            <li>知識(knowledge): {{ status.knowledge }}</li>
-            <li>資格力(qualification): {{ status.qualification }}</li>
-        </ul>
-
-        <br>
-        <!-- レーダーチャートの表示 -->
-        <div class="flex justify-center">
-            <img src="{% url 'main:radar_chart' %}" alt="ステータスのレーダーチャート" class="mx-auto">
-        </div>
-    </div>
-
-        <br>
 
         <h1 class="text-3xl font-bold mb-6">{{ status.user.username }}さんへの評価一覧</h1>
 
@@ -84,6 +67,26 @@
     
         </ul>
     </nav>
+
+
+    <br>
+    <div class="kakomi">
+        <h1 class="text-3xl font-bold mb-6">{{ status.user.username }}さんの評価</h1>
+
+        <br>
+
+        <ul>
+            <li>社交性(sociability): {{ status.sociability }}</li>
+            <li>知識(knowledge): {{ status.knowledge }}</li>
+            <li>資格力(qualification): {{ status.qualification }}</li>
+        </ul>
+
+        <br>
+        <!-- レーダーチャートの表示 -->
+        <div class="flex justify-center">
+            <img src="{% url 'main:radar_chart' %}" alt="ステータスのレーダーチャート" class="mx-auto">
+        </div>
+    </div>
 
     <div class="mt-8">
         <a href="{% url 'main:home' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">

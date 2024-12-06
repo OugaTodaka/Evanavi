@@ -71,7 +71,6 @@ body{
     width: 100%;
     max-width: 500px;
     margin: 20px auto;
-    
 }
 
 .signup-button{
@@ -103,4 +102,14 @@ li{
   border-left:1px #000000 solid;
   border-bottom:1px #000000 solid;
   background-color: #d9d9d9;
+}
+
+.kakomi {
+  background-color: #f8f5f5;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid #060404;
+  width: 100%;
+  margin: 20px auto;
 }
