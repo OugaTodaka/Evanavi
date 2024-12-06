@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="ja">
+{% extends 'main/base.html' %}
+{% block content %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,9 +21,10 @@
 
         <div class="download-links">
             <h3>保存する:</h3>
-            <a href="{% url 'main:download_self_promotion' 'txt' %}" class="btn">TXT形式で保存</a>
-            <a href="{% url 'main:download_self_promotion' 'json' %}" class="btn">JSON形式で保存</a>
+            <br>
+            <a href="{% url 'main:download_self_promotion' 'txt' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">TXT形式で保存</a>
+            <a href="{% url 'main:download_self_promotion' 'json' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">JSON形式で保存</a>
         </div>
     </div>
 </body>
-</html>
+{% endblock %}
