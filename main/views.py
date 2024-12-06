@@ -158,7 +158,7 @@ def user_data_view(request):
     return render(request, 'main/user_data_form.html', {'form': form})
 
 
-CREDENTIALS_PATH = 'C:/Users/s_ozasa/Desktop/feisty-return-443904-j8-ca40d8e38658.json'
+CREDENTIALS_PATH = 'C:/Users/t_toyota/Desktop/feisty-return-443904-j8-ca40d8e38658.json'
 CREDENTIALS = service_account.Credentials.from_service_account_file(CREDENTIALS_PATH)
 
 
@@ -367,7 +367,7 @@ def load_api_key_from_json(file_path):
         return config.get("openai_api_key")
 
 # JSONファイルのパス
-json_file_path = 'C:/Users/your_name/Desktop/openAI_api.json'
+json_file_path = 'C:/Users/t_toyota/Desktop/openAI_api.json'
 
 # APIキーをロード
 api_key = load_api_key_from_json(json_file_path)
