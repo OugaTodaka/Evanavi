@@ -15,24 +15,32 @@ from django.db.models import F, Case, When, ExpressionWrapper, IntegerField
 from django.contrib import messages
 import openai
 from django.utils.decorators import method_decorator
+from google.cloud import translate_v3 as translate
+from google.cloud import language_v1
+import os
+from google.oauth2 import service_account
 
 # メイン画面
 class HomeView(TemplateView):
     template_name = "main/home.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
-# # ログイン中のユーザーのステータスを表示する
-# @login_required  # ログインが必要なビューにするためのデコレーター
-# def status_view(request):
-#     # ログイン中のユーザーのステータスを取得
-#     status, created = Status.objects.get_or_create(user=request.user, defaults={
-#         'sociability': 1,
-#         'knowledge': 1,
-#         'qualification': 1,
-#     })
-    
-#     # テンプレートにステータス情報を渡す
-#     return render(request, 'main/status.html', {'status': status})
+        # ユーザーがログイン中の場合のみコンテキストを追加
+        if self.request.user.is_authenticated:
+            status, created = Status.objects.get_or_create(
+                user=self.request.user,
+                defaults={
+                    'sociability': 1,
+                    'knowledge': 1,
+                    'qualification': 1,
+                }
+            )
+            context['status'] = status
+        
+        # ログインしていない場合は、特に何も追加しない
+        return context
 
 # レーダーチャートでステータスを表示する
 def radar_chart_view(request):
@@ -150,52 +158,170 @@ def user_data_view(request):
     return render(request, 'main/user_data_form.html', {'form': form})
 
 
+CREDENTIALS_PATH = 'C:/Users/s_ozasa/Desktop/feisty-return-443904-j8-ca40d8e38658.json'
+CREDENTIALS = service_account.Credentials.from_service_account_file(CREDENTIALS_PATH)
+
+
+def translate_text(text, target_language='en'):
+    """
+    指定されたテキストを指定言語に翻訳
+    
+    Args:
+        text (str): 翻訳する元のテキスト
+        target_language (str): 翻訳先の言語コード（デフォルトは英語）
+    
+    Returns:
+        str: 翻訳されたテキスト
+    """
+    # Translate APIクライアントの初期化
+    client = translate.TranslationServiceClient(credentials=CREDENTIALS)
+    parent = f"projects/{CREDENTIALS.project_id}/locations/global"
+
+    # 翻訳リクエストを実行
+    response = client.translate_text(
+        parent=parent,
+        contents=[text],
+        mime_type="text/plain",  # テキスト形式
+        target_language_code=target_language,
+    )
+    return response.translations[0].translated_text
+
+
+
+def analyze_translated_text(translated_text):
+    """
+    翻訳されたテキストを分析
+    
+    Args:
+        translated_text (str): 翻訳されたテキスト
+    
+    Returns:
+        dict: NLP分析結果
+    """
+    # Natural Language APIクライアントの初期化
+    client = language_v1.LanguageServiceClient(credentials=CREDENTIALS)
+    
+    # テキスト文書を作成
+    document = language_v1.Document(
+        content=translated_text,
+        type_=language_v1.Document.Type.PLAIN_TEXT
+    )
+    
+    # センチメント分析
+    sentiment = client.analyze_sentiment(request={'document': document}).document_sentiment
+    
+    # エンティティ分析
+    entities = client.analyze_entities(request={'document': document}).entities
+    
+    # カテゴリ分析（英語テキストでのみ実行）
+    try:
+        categories = client.classify_text(request={'document': document}).categories
+    except Exception:
+        categories = []
+    
+    return {
+        'original_text': translated_text,
+        'sentiment_score': sentiment.score,
+        'sentiment_magnitude': sentiment.magnitude,
+        'entities': [
+            {
+                'name': entity.name,
+                'type': language_v1.Entity.Type(entity.type_).name,
+                'salience': entity.salience
+            } for entity in entities
+        ],
+        'categories': [
+            {
+                'name': category.name,
+                'confidence': category.confidence
+            } for category in categories
+        ]
+    }
+
+
+def process_japanese_evaluation(japanese_text):
+    """
+    日本語テキストを翻訳し、NLP分析を実行
+    
+    Args:
+        japanese_text (str): 日本語の評価テキスト
+    
+    Returns:
+        dict: 翻訳および分析結果
+    """
+    # テキストを英語に翻訳
+    translated_text = translate_text(japanese_text)
+    
+    # 翻訳されたテキストを分析
+    analysis_result = analyze_translated_text(translated_text)
+    
+    return {
+        'original_japanese': japanese_text,
+        'translated_text': analysis_result['original_text'],
+        'sentiment_score': analysis_result['sentiment_score'],
+        'sentiment_magnitude': analysis_result['sentiment_magnitude'],
+        'entities': analysis_result['entities'],
+        'categories': analysis_result['categories']
+    }
+
+
 @user_data_required
 @login_required
 def eva_view(request):
-    # ログインしているユーザーのデータを取得
     current_user_data = get_object_or_404(UserData, username=request.user)
-    current_group_code = current_user_data.group_code  # ログインユーザーのグループコードを取得
+    current_group_code = current_user_data.group_code
 
     if request.method == 'POST':
-        form = EvaForm(request.POST, from_user=request.user, group_code=current_group_code)  # from_user と group_code を渡す
+        form = EvaForm(request.POST, from_user=request.user, group_code=current_group_code)
         if form.is_valid():
             eva = form.save(commit=False)
-            eva.from_user = request.user  # ログインユーザーが評価を行う
-            eva.save()
+            eva.from_user = request.user
 
-            # 評価対象ユーザーのステータスを取得
-            target_status = get_object_or_404(Status, user=eva.for_user)
-
-            # ステータスを上げる単語のリスト
-            sociability_list = ['社交性', 'リーダーシップ','チームワーク', 'コミュニケーション', '協力', '積極性', '調整力', '対人スキル', '交渉力', '人脈作り', 'プレゼンテーション', '適応力', '共感力', '異文化理解']  # 社交性を上げる単語
-            knowledge_list = ['知識', '技術スキル', '問題解決', '分析力', 'クリティカルシンキング', '学習意欲', '情報収集', '戦略的思考', '専門知識', 'データ分析', '調査能力', '創造性', '批判的思考', '語学力', '研究']  # 知識を上げる単語
-            qualification_list = ['資格取得', '認定', '資格', '取得', '認定証', '業界標準資格', 'トレーニング', '技術認定', 'プロフェッショナル資格', '免許', '専門資格', '実務経験', '技術資格', 'デジタルリテラシー']  # 資格を上げる単語
+            # テキスト分析の実行
+            nlp_analysis = process_japanese_evaluation(eva.detail)
             
-            # 評価内容に基づいてステータスを更新
-            detail = eva.detail.lower()  # 小文字にして評価内容をチェックしやすくする
-            if any(word in detail for word in sociability_list):
-                target_status.sociability_point += 1  # 社交性ポイントを上げる
-                if target_status.sociability_point > 0 and target_status.sociability_point % 10 == 0 and target_status.sociability < 5:
-                    target_status.sociability += 1  # 社交性を上げる
-
-            if any(word in detail for word in knowledge_list):
-                target_status.knowledge_point += 1  # 知識ポイントを上げる
-                if target_status.knowledge_point > 0 and target_status.knowledge_point % 10 == 0 and target_status.knowledge < 5:
-                    target_status.knowledge += 1  # 知識を上げる
-
-            if any(word in detail for word in qualification_list):
-                target_status.qualification_point += 1  # 資格ポイントを上げる
-                if target_status.qualification_point > 0 and target_status.qualification_point % 10 == 0 and target_status.qualification < 5:
-                    target_status.qualification += 1  # 資格を上げる
-
-            # ステータスを保存
+            # NLPスコアに基づいたステータス更新ロジック
+            target_status = get_object_or_404(Status, user=eva.for_user)
+            
+            # センチメントスコアに基づくポイント付与
+            if nlp_analysis['sentiment_score'] > 0.5:
+                target_status.sociability_point += 2
+                target_status.knowledge_point += 1
+            
+            # エンティティ分析に基づく専門性評価
+            professional_entities = [
+                entity for entity in nlp_analysis['entities'] 
+                if entity['type'] in ['PROFESSIONAL_TERM', 'SKILL', 'WORK_OF_ART']
+            ]
+            if professional_entities:
+                target_status.qualification_point += len(professional_entities)
+            
+            # カテゴリ分析に基づく追加評価
+            for category in nlp_analysis['categories']:
+                if category['confidence'] > 0.7:
+                    if 'Leadership' in category['name']:
+                        target_status.sociability_point += 3
+                    elif 'Technology' in category['name']:
+                        target_status.knowledge_point += 3
+                    elif 'Professional Development' in category['name']:
+                        target_status.qualification_point += 3
+            
+            # 既存のレベルアップロジックを保持
+            if target_status.sociability_point > 0 and target_status.sociability_point % 10 == 0 and target_status.sociability < 5:
+                target_status.sociability += 1
+            
+            if target_status.knowledge_point > 0 and target_status.knowledge_point % 10 == 0 and target_status.knowledge < 5:
+                target_status.knowledge += 1
+            
+            if target_status.qualification_point > 0 and target_status.qualification_point % 10 == 0 and target_status.qualification < 5:
+                target_status.qualification += 1
+            
             target_status.save()
-
-            return redirect('main:home')  # 適切なリダイレクト先に変更
+            eva.save()
+            return redirect('main:home')
     else:
-        form = EvaForm(from_user=request.user, group_code=current_group_code)  # from_user と group_code を渡す
-
+        form = EvaForm(from_user=request.user, group_code=current_group_code)
+    
     return render(request, 'main/eva_form.html', {
         'form': form,
     })
@@ -241,7 +367,7 @@ def load_api_key_from_json(file_path):
         return config.get("openai_api_key")
 
 # JSONファイルのパス
-json_file_path = 'C:/Users/t_toyota/Desktop/openAI_api.json'
+json_file_path = 'C:/Users/your_name/Desktop/openAI_api.json'
 
 # APIキーをロード
 api_key = load_api_key_from_json(json_file_path)
