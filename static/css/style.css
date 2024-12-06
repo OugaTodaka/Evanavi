@@ -96,3 +96,11 @@ li{
   background-color: #e0dede;
   padding: 10px;
 }
+
+.soushin{
+  border-right:1px #000000 solid;
+  border-top:1px #000000 solid;
+  border-left:1px #000000 solid;
+  border-bottom:1px #000000 solid;
+  background-color: #d9d9d9;
+}

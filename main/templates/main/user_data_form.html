@@ -1,11 +1,13 @@
 {% extends 'main/base.html' %}
 {% block content %}
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">送信</button>
-</form>
-
+<div class="form-container">
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <br>
+        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">送信</button>
+    </form>
+</div>
 <script>
     document.getElementById("zip_code").addEventListener("input", function () {
         var zip_code = this.value.replace('-', '');  // ハイフンを削除

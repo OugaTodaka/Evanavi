@@ -17,6 +17,23 @@
     <a href="{% url 'main:eva_list' %}" class="menu">　評価一覧　</a>
     <a href="{% url 'main:user_register' %}" class="menu">　ユーザ情報　</a>
     <!-- <a href="{% url 'user:signout' %}" class="menu">ログアウト</a> -->
+    <div class="form-container">
+        <h1 class="text-3xl font-bold mb-6">{{ status.user.username }}さんの評価</h1>
+
+        <br>
+
+        <ul>
+            <li>社交性(sociability): {{ status.sociability }}</li>
+            <li>知識(knowledge): {{ status.knowledge }}</li>
+            <li>資格力(qualification): {{ status.qualification }}</li>
+        </ul>
+
+        <br>
+        <!-- レーダーチャートの表示 -->
+        <div class="flex justify-center">
+            <img src="{% url 'main:radar_chart' %}" alt="ステータスのレーダーチャート" class="mx-auto">
+        </div>
+    </div>
     {% else %}
     <div class="border-radius">
         <p>概要説明</p>
@@ -29,6 +46,7 @@
     <div class="button">
         <a href="{% url 'user:signin' %}">ログイン</a>
     </div>
+    
     {% endif %}
 </body>
 </html>
